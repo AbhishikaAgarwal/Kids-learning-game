@@ -1,0 +1,127 @@
+from tkinter import*
+
+root1=Tk()
+#create canvas as a child to root window
+c=Canvas(root1,bg='lightblue', height=700,width=1200)
+
+file1=PhotoImage(file="abc.gif")
+file2=PhotoImage(file="xyz.gif")
+file3=PhotoImage(file="pqr.gif")
+file4=PhotoImage(file="school.gif")
+file5=PhotoImage(file="car.gif")
+file6=PhotoImage(file="bike.gif")
+
+c.create_image(200, 200, anchor=CENTER, image=file4)
+c.create_image(600, 200, anchor=CENTER, image=file1)
+c.create_image(1000, 200, anchor=CENTER, image=file2)
+c.create_image(200, 400, anchor=CENTER, image=file3)
+c.create_image(600, 400, anchor=CENTER, image=file5)
+c.create_image(1000, 400, anchor=CENTER, image=file6)
+
+c.pack(expand = YES, fill = BOTH)
+c.pack()
+root1.after(10000, lambda: root1.destroy())
+root1.mainloop()
+
+
+from tkinter import *
+
+
+class CheckBar2(Frame):
+    def __init__(self, parent, picks=[], slimit=2):
+        Frame.__init__(self, parent)
+        self.vars = []
+        self.slimit = slimit  #  max selected items allowed
+        self.selcount = 0  # current selected items count
+        
+        # Create checkbuttons
+        for pick in picks:
+            var = IntVar()
+            chk = Checkbutton(self, text=pick, variable=var)
+            
+            # define button command
+            def cbhandler(self=self, btn=chk, var=var):
+                self.on_cbclicked(btn, var)
+            
+            # configure callback
+            chk.configure(command=cbhandler)
+            chk.pack(side=TOP, anchor=W, expand=YES)
+            self.vars.append(var)
+    def state(self):
+        return map((lambda var:var.get()),self.vars)
+    
+    def on_cbclicked(self, btn, var):
+        prevcount = self.selcount
+        
+        value = var.get()
+        if value == 1:
+            self.selcount += 1
+        else:
+            self.selcount -= 1
+        
+        process = False
+        state = NORMAL
+        if self.selcount == self.slimit:
+            # disable all other
+            process = True
+            state = DISABLED
+        elif (self.selcount < self.slimit) and (prevcount == self.slimit):
+            # enable all
+            process = True
+            state = NORMAL
+        if process:
+            for n in self.winfo_children():
+                w = self.nametowidget(n)
+                value = int(w.getvar(w.cget('variable')))
+                if value == 0:
+                    w.configure(state=state)
+                    
+def allstates():
+    print(list(Prm2.state()))
+    choice_list=list(Prm2.state())
+    choice_list
+    close_window()
+    open_new_window(choice_list)
+def close_window ():
+    root.destroy()
+def open_new_window(lst):
+    root3=Tk()
+    root3.title("New Window")
+    root3.geometry("300x300")
+    root3.configure(background='lightpink')
+    score=0
+    correct_choice_list=[1,0,1,0,1,0,1,0,1,0,1,0]
+    c_list=[0,2,4,6,8,10]
+    a=[]
+    for i in range(12):
+        if(lst[i]==1):
+            a.append(i)
+    for i in range(6):
+        for j in range(len(a)):
+            if(c_list[i]==a[j]):
+                score+=1;
+    w2=Label(root3,text="Your Score is :- ")
+    w2.config(width=200)
+    w2.config(font=("Courier",20))
+    w = Label(root3, text=score)
+    w.config(width=200)
+    w.config(font=("Courier",20))
+    w2.pack()
+    w.pack()
+    
+if __name__ == '__main__':
+    root = Tk()
+    root.title("Graph")
+    root.geometry("300x350")
+    root.configure(background='lightblue')
+    lfckb = LabelFrame(root, text="Select Parameters (max 6): ", relief=GROOVE)
+    lfckb.pack(padx=10, pady=10, side=LEFT)
+    
+    Prm2 = CheckBar2(lfckb, picks=['Bike','Dog','Car','Monkey','School Life','Tub','Eiffel Tower','IIT','LPU','Park','Cat','Hospital'], slimit=6)
+    Prm2.pack(side=LEFT, fill=X)
+    Button(root,text ="Quit",command=root.destroy).pack(side=RIGHT)
+    Button(root,text ="Submit",command=allstates).pack(side=RIGHT)
+
+
+
+root.mainloop()
